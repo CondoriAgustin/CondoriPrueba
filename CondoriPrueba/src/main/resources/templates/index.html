@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Teruel WebSocket</title>
+
+</head>
+
+<body>
+
+    <h1>Envío de mensajes</h1>
+
+    <form id="messageForm">
+
+        <input type="text" id="name" placeholder="nombre" required><br><br>
+
+        <textarea id="message" placeholder="mensaje" required></textarea><br><br>
+
+        <button type="submit">Enviar</button>
+
+    </form>
+
+    <div id="messagesContainer">
+
+        <h2>Mensajes</h2>
+
+        <ul id="messagesList"></ul>
+
+    </div>
+
+
+
+    <script>
+
+        // Conectar al servidor WebSocket
+
+        let socket = new WebSocket('ws://localhost:8080/ws');
+
+
+
+        // Manejar la conexión abierta
+
+        socket.onopen = function(event) {
+
+            console.log("Conectado al servidor WebSocket");
+
+        };
+
+
+
+        // Manejar los mensajes recibidos
+
+        socket.onmessage = function(event) {
+
+            const messagesList = document.getElementById('messagesList');
+
+            const li = document.createElement('li');
+
+            li.textContent = event.data;
+
+            messagesList.appendChild(li);
+
+        };
+
+
+
+        // Manejar el formulario de envío de mensajes
+
+        const form = document.getElementById('messageForm');
+
+        form.addEventListener('submit', function(event) {
+
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+
+            const message = document.getElementById('message').value;
+
+            const formattedMessage = `${name}: ${message}`;
+
+
+
+            // Enviar el mensaje al servidor WebSocket
+
+            socket.send(formattedMessage);
+
+
+
+            // Limpiar el campo de mensaje
+
+            document.getElementById('message').value = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+
